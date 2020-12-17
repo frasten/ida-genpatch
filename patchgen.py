@@ -12,7 +12,7 @@ class patchgen(idaapi.plugin_t):
     wanted_hotkey = "Alt-F8"
 
     def init(self):
-        print "[+] PatchGen plugin loaded. Press %s to generate the patch code." % patchgen.wanted_hotkey
+        print("[+] PatchGen plugin loaded. Press %s to generate the patch code." % patchgen.wanted_hotkey)
         return idaapi.PLUGIN_OK
 
     def run(self, arg):
@@ -45,8 +45,7 @@ class patchgen(idaapi.plugin_t):
         current_group = PatchGroup()
         
         patch_groups = []
-        sorted_addresses = patches.keys()
-        sorted_addresses.sort() # Dictionaries aren't sorted by default
+        sorted_addresses = sorted(patches.keys()) # Dictionaries aren't sorted by default
         for addr in sorted_addresses:
             if addr > last_addr + 1 and current_group.length() > 0:
                 # Not in sequence:
@@ -64,15 +63,15 @@ class patchgen(idaapi.plugin_t):
     def print_patches(self, patches):
         patch_groups = self.group_patches(patches)
 
-        print
-        print "/" * 20 + " %d Patches " % (len(patch_groups)) + "/" * 20
-        print
+        print()
+        print("/" * 20 + " %d Patches " % (len(patch_groups)) + "/" * 20)
+        print()
         for chunk in patch_groups:
             patched_instructions = " | ".join(chunk.disasm_patched())
             original_instructions = " | ".join(chunk.disasm_original())
 
             patch_descr = "// %s(): [%s]  ==>  [%s]" % (chunk.func_name(), original_instructions, patched_instructions)
-            print patch_descr
+            print(patch_descr)
 
             fpos_str = self.h(chunk.fpos())
             orig_str = self.h_bytes(chunk.original())
@@ -81,10 +80,10 @@ class patchgen(idaapi.plugin_t):
             # print "%s: %s => %s" % (fpos_str, orig_str, patch_str)
             
             if chunk.length() == 1:
-                print "Hunks.Add(new SinglePatchHunk(%s, %s, %s));" % (fpos_str, orig_str, patch_str)
+                print("Hunks.Add(new SinglePatchHunk(%s, %s, %s));" % (fpos_str, orig_str, patch_str))
             else:
-                print "Hunks.Add(new SinglePatchHunk(%s, new byte[] { %s }, new byte[] { %s }));" % (fpos_str, orig_str, patch_str)
-            print
+                print("Hunks.Add(new SinglePatchHunk(%s, new byte[] { %s }, new byte[] { %s }));" % (fpos_str, orig_str, patch_str))
+            print()
 
     
     def term(self):
