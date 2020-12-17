@@ -56,8 +56,9 @@ class patchgen(idaapi.plugin_t):
             current_group.append(bytePatch)
             last_addr = addr
         
-        # The last group:
-        patch_groups.append(current_group)
+        if len(patch_groups) > 0:
+            # The last group:
+            patch_groups.append(current_group)
         return patch_groups
     
     def print_patches(self, patches):
