@@ -20,9 +20,9 @@ class patchgen(idaapi.plugin_t):
 
     def get_patched_bytes(self, start=None, end=None):
         if start is None:
-            start = idaapi.cvar.inf.minEA
+            start = idaapi.cvar.inf.min_ea
         if end is None:
-            end = idaapi.cvar.inf.maxEA
+            end = idaapi.cvar.inf.max_ea
 
         patched_bytes = dict()
 
