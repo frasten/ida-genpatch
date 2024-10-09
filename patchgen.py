@@ -1,28 +1,21 @@
 import re
-import idaapi
+import ida_idaapi
+import ida_ida
 import idc
 import ida_bytes
+import ida_funcs
 # RunPlugin("patchgen", 0)
 
-class patchgen(idaapi.plugin_t):
-    flags = idaapi.PLUGIN_UNL
-    comment = "This is a comment"
-    help = "Press Alt-F8 to generate the patch code."
-    wanted_name = "patchgen"
-    wanted_hotkey = "Alt-F8"
-
-    def init(self):
-        print("[+] PatchGen plugin loaded. Press %s to generate the patch code." % patchgen.wanted_hotkey)
-        return idaapi.PLUGIN_OK
-
+class PatchGenMod(ida_idaapi.plugmod_t):
     def run(self, arg):
+        print(">>> MyPlugmod.run() is invoked with argument value: {arg}.")
         self.print_patches(self.get_patched_bytes())
 
     def get_patched_bytes(self, start=None, end=None):
         if start is None:
-            start = idaapi.cvar.inf.min_ea
+            start = ida_ida.inf_get_min_ea()
         if end is None:
-            end = idaapi.cvar.inf.max_ea
+            end = ida_ida.inf_get_max_ea()
 
         patched_bytes = dict()
 
@@ -30,7 +23,7 @@ class patchgen(idaapi.plugin_t):
             patched_bytes[ea] = PatchData(ea, fpos, original, patched)
             return 0
 
-        idaapi.visit_patched_bytes(start, end, collector)
+        ida_bytes.visit_patched_bytes(start, end, collector)
         return patched_bytes
     
     def h(self, num):
@@ -86,9 +79,19 @@ class patchgen(idaapi.plugin_t):
                 print("Hunks.Add(new SinglePatchHunk(%s, new byte[] { %s }, new byte[] { %s }));" % (fpos_str, orig_str, patch_str))
             print()
 
-    
-    def term(self):
+    def __del__(self):
         pass
+
+class PatchGen(ida_idaapi.plugin_t):
+    flags = ida_idaapi.PLUGIN_UNL | ida_idaapi.PLUGIN_MULTI
+    comment = "This is a comment"
+    help = "Press Alt-F8 to generate the patch code."
+    wanted_name = "patchgen"
+    wanted_hotkey = "Alt-F8"
+
+    def init(self):
+        print("[+] PatchGen plugin loaded. Press %s to generate the patch code." % PatchGen.wanted_hotkey)
+        return PatchGenMod()
 
 
 class PatchData:
@@ -113,7 +116,7 @@ class PatchGroup:
         return self.bytes[0].fpos
 
     def func_name(self):
-        return idaapi.get_func_name(self.ea())
+        return ida_funcs.get_func_name(self.ea())
 
     def length(self):
         return len(self.bytes)
@@ -155,4 +158,4 @@ class PatchGroup:
 
 
 def PLUGIN_ENTRY():
-    return patchgen()
+    return PatchGen()

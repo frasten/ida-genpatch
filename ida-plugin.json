@@ -1,0 +1,6 @@
+{
+  "plugin": {
+    "name": "IDA PatchGen",
+    "entryPoint": "patchgen.py"
+  }
+}
