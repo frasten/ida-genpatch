@@ -6,9 +6,20 @@ import ida_bytes
 import ida_funcs
 # RunPlugin("patchgen", 0)
 
+class PatchGen(ida_idaapi.plugin_t):
+    flags = ida_idaapi.PLUGIN_UNL | ida_idaapi.PLUGIN_MULTI
+    comment = "Lists the patched addressess, source bytes and patches bytes to use them in custom-made patchers."
+    help = "Press Alt-F8 to generate the patch code."
+    wanted_name = "patchgen"
+    wanted_hotkey = "Alt-F8"
+
+    def init(self):
+        print("[+] PatchGen plugin loaded. Press %s to generate the patch code." % PatchGen.wanted_hotkey)
+        return PatchGenMod()
+
+
 class PatchGenMod(ida_idaapi.plugmod_t):
     def run(self, arg):
-        print(">>> MyPlugmod.run() is invoked with argument value: {arg}.")
         self.print_patches(self.get_patched_bytes())
 
     def get_patched_bytes(self, start=None, end=None):
@@ -78,20 +89,6 @@ class PatchGenMod(ida_idaapi.plugmod_t):
             else:
                 print("Hunks.Add(new SinglePatchHunk(%s, new byte[] { %s }, new byte[] { %s }));" % (fpos_str, orig_str, patch_str))
             print()
-
-    def __del__(self):
-        pass
-
-class PatchGen(ida_idaapi.plugin_t):
-    flags = ida_idaapi.PLUGIN_UNL | ida_idaapi.PLUGIN_MULTI
-    comment = "This is a comment"
-    help = "Press Alt-F8 to generate the patch code."
-    wanted_name = "patchgen"
-    wanted_hotkey = "Alt-F8"
-
-    def init(self):
-        print("[+] PatchGen plugin loaded. Press %s to generate the patch code." % PatchGen.wanted_hotkey)
-        return PatchGenMod()
 
 
 class PatchData:
