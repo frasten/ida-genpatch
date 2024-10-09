@@ -7,9 +7,9 @@ import ida_bytes
 class patchgen(idaapi.plugin_t):
     flags = idaapi.PLUGIN_UNL
     comment = "This is a comment"
+    help = "Press Alt-F8 to generate the patch code."
     wanted_name = "patchgen"
-    wanted_hotkey = "Ctrl-Alt-F8"
-    help = "Press %s to generate the patch code." % wanted_hotkey
+    wanted_hotkey = "Alt-F8"
 
     def init(self):
         print("[+] PatchGen plugin loaded. Press %s to generate the patch code." % patchgen.wanted_hotkey)
