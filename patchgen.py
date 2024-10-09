@@ -87,7 +87,7 @@ class PatchGenMod(ida_idaapi.plugmod_t):
             if chunk.length() == 1:
                 print("Hunks.Add(new SinglePatchHunk(%s, %s, %s));" % (fpos_str, orig_str, patch_str))
             else:
-                print("Hunks.Add(new SinglePatchHunk(%s, new byte[] { %s }, new byte[] { %s }));" % (fpos_str, orig_str, patch_str))
+                print("Hunks.Add(new SinglePatchHunk(%s, [%s], [%s]));" % (fpos_str, orig_str, patch_str))
             print()
 
 
